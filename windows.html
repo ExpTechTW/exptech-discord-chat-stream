@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <title>XP.css example</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://unpkg.com/xp.css" />
+    <style>
+        body,
+        html {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .window {
+            margin: 0;
+            height: calc(100% - 20px);
+        }
+
+        .title-bar-controls {
+            display: flex;
+        }
+
+        .title-bar-btn {
+            width: 16px;
+            height: 16px;
+            margin-left: 2px;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: none;
+        }
+
+        .chat-content {
+            overflow-y: auto;
+            height: calc(100% - 32px);
+            font-size: 18px;
+        }
+
+        .chat-message {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-message img.user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chat-message img.message-image {
+            max-width: 70%;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">
+                ExpTech Studio | Discord Chat
+            </div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" class="title-bar-btn"></button>
+                <button aria-label="Maximize" class="title-bar-btn"></button>
+                <button aria-label="Close" class="title-bar-btn"></button>
+            </div>
+        </div>
+        <div class="window-body chat-content">
+        </div>
+    </div>
+
+    <script>
+        const chatContent = document.querySelector('.chat-content');
+        function addMessage(username, message, url, time) {
+            const div = document.createElement('div');
+            div.className = 'chat-message';
+
+            const avatar = document.createElement('img');
+            avatar.src = url;
+            avatar.className = 'user-avatar';
+            avatar.alt = `${username} Avatar`;
+            div.appendChild(avatar);
+
+            div.appendChild(document.createTextNode(`${username} [${formatTime(time)}]: ${message}`));
+            chatContent.appendChild(div);
+            chatContent.scrollTop = chatContent.scrollHeight;
+
+            const maxMessages = 20;
+            while (chatContent.children.length > maxMessages) {
+                chatContent.removeChild(chatContent.firstChild);
+            }
+        }
+
+        let time = []
+        setInterval(async () => {
+            let data = await fetchData("https://bot.exptech.com.tw/api/v1/et/chat");
+            if (data) {
+                let Json = await data.json();
+
+                for (const body of Json) {
+                    if (time.length > 65) time.splice(0, 1);
+                    if (!time.includes(body.time)) {
+                        time.push(body.time);
+                        addMessage(body.name, body.msg, body.url, body.time);
+                    }
+                }
+            }
+        }, 1000);
+
+        async function fetchData(url, timeout = 1500) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            try {
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error) {
+                if (error.name === "AbortError") console.log(`[fetchData] => time out | ${url}`);
+                else console.log(`[fetchData] => fetch error: ${error.message} | ${url}`);
+                return null;
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const day = date.getDate().toString().padStart(2, "0");
+            const hours = date.getHours().toString().padStart(2, "0");
+            const minutes = date.getMinutes().toString().padStart(2, "0");
+            const seconds = date.getSeconds().toString().padStart(2, "0");
+
+            return `${month}/${day} ${hours}:${minutes}:${seconds}`;
+        }
+    </script>
+</body>
+
+</html>
