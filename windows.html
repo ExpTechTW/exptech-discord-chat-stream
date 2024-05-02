@@ -15,13 +15,13 @@
         }
 
         .window {
-            border-radius:15px 15px 15px 15px;
+            border-radius: 15px 15px 15px 15px;
             margin: 0;
             height: calc(100% - 20px);
         }
-        
+
         .title-bar {
-            border-radius:15px 15px 0px 0px;
+            border-radius: 15px 15px 0px 0px;
         }
 
         .title-bar-controls {
@@ -70,7 +70,7 @@
     </style>
 </head>
 
-<body>
+<body style="user-select: none;">
     <div class="window">
         <div class="title-bar">
             <div class="title-bar-text" style="padding-left: 7px;">
@@ -93,9 +93,9 @@
             div.className = 'chat-message';
 
             const avatar = document.createElement('img');
-            avatar.src = url;
+            avatar.src = url ?? "https://img.icons8.com/color/48/discord-logo.png";
             avatar.className = 'user-avatar';
-            avatar.alt = `${username} Avatar`;
+            avatar.alt = ``;
             div.appendChild(avatar);
 
             div.appendChild(document.createTextNode(`${username} [${formatTime(time)}]: ${message}`));
