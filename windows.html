@@ -11,13 +11,17 @@
             margin: 0;
             height: 100%;
             overflow: hidden;
-            padding: 10px;
-            background-color: transparent;
+            background-color: #33333300;
         }
 
         .window {
+            border-radius:15px 15px 15px 15px;
             margin: 0;
             height: calc(100% - 20px);
+        }
+        
+        .title-bar {
+            border-radius:15px 15px 0px 0px;
         }
 
         .title-bar-controls {
@@ -34,15 +38,17 @@
         }
 
         .chat-content {
+            font-family: PMingLiU;
+            font-weight: 600;
             overflow-y: auto;
-            height: calc(100% - 32px);
-            font-size: 18px;
+            height: calc(100% - 40px);
+            font-size: 14px;
         }
 
         .chat-message {
             border: 1px solid #ccc;
-            padding: 10px;
-            margin: 10px;
+            padding: 5px;
+            margin: 3px;
             border-radius: 5px;
             background-color: #f5f5f5;
             display: flex;
@@ -50,8 +56,8 @@
         }
 
         .chat-message img.user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             margin-right: 10px;
         }
@@ -67,7 +73,7 @@
 <body>
     <div class="window">
         <div class="title-bar">
-            <div class="title-bar-text">
+            <div class="title-bar-text" style="padding-left: 7px;">
                 ExpTech Studio | Discord Chat
             </div>
             <div class="title-bar-controls">
@@ -96,7 +102,7 @@
             chatContent.appendChild(div);
             chatContent.scrollTop = chatContent.scrollHeight;
 
-            const maxMessages = 20;
+            const maxMessages = 50;
             while (chatContent.children.length > maxMessages) {
                 chatContent.removeChild(chatContent.firstChild);
             }
